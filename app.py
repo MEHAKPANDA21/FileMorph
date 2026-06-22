@@ -116,19 +116,17 @@ def convert_pdf_to_word_local(input_path, output_path):
         logger.error(f"Local PDF to Word conversion error: {str(e)}")
         return False, str(e)
 
+import os
+import pikepdf
+from flask import request, jsonify, send_file
+
 def compress_pdf_local(input_path, output_path):
-    """Compress PDF locally using pikepdf"""
+    """Compress a PDF file using pikepdf."""
     try:
-        if not HAS_PIKEPDF:
-            return False, "pikepdf library not available"
-        
         with pikepdf.open(input_path) as pdf:
             pdf.save(output_path, compress_streams=True)
-        
-        logger.info(f"Local compression: {input_path} -> {output_path}")
         return True, None
     except Exception as e:
-        logger.error(f"Local PDF compression error: {str(e)}")
         return False, str(e)
 
 #Home Page
@@ -295,59 +293,29 @@ def convert_pdf_to_word_form():
         logger.error(f"Error in pdf-to-word conversion: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/compress-pdf-file", methods=['POST'])
 def compress_pdf_file_form():
     """Handle PDF compression using local libraries"""
     try:
         if 'file' not in request.files:
             return jsonify({"error": "No file provided"}), 400
-        
+            
         file = request.files['file']
-        if file.filename == '':
-            return jsonify({"error": "No file selected"}), 400
-        
-        if not file.filename.endswith('.pdf'):
-            return jsonify({"error": "Please upload a PDF file"}), 400
-        
-        filename = secure_filename(file.filename)
+        filename = file.filename
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
         
-        logger.info(f"Compressing PDF (local): {filename}")
-        
-        # Get original file size
-        original_size = os.path.getsize(filepath)
-        
-        # Generate output filename
-        output_filename = f"compressed_{filename}"
+        output_filename = "compressed_" + filename
         output_path = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
         
-        # Perform local compression
-        success, error = compress_pdf_local(filepath, output_path)
-        
-        if success:
-            compressed_size = os.path.getsize(output_path)
-            reduction_percent = round((1 - compressed_size / original_size) * 100, 2) if original_size > 0 else 0
+        with pikepdf.open(filepath) as pdf:
+            pdf.save(output_path, compress_streams=True)
             
-            os.remove(filepath)
-            logger.info(f"Successfully compressed: {filename} -> {output_filename} ({reduction_percent}% reduction)")
-            
-            # Return file with compression stats
-            response = send_file(output_path, as_attachment=True, download_name=output_filename)
-            response.headers['X-Original-Size'] = str(original_size)
-            response.headers['X-Compressed-Size'] = str(compressed_size)
-            response.headers['X-Reduction-Percent'] = str(reduction_percent)
-            return response
-        else:
-            if os.path.exists(filepath):
-                os.remove(filepath)
-            logger.error(f"Compression error: {error}")
-            return jsonify({"error": f"Compression failed: {error}"}), 500
+        return send_file(output_path, as_attachment=True, download_name=output_filename)
         
     except Exception as e:
-        logger.error(f"Error in compress-pdf conversion: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
 
 
 if __name__ == "__main__":
