@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileMorph</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head><body><div class="background-overlay"></div>
+
+<div class="container">
+
+    <div class="logo-section">
+
+        <h1 class="logo">
+            <span class="orange">FIL</span><span class="white">EMO</span><span class="green">RPH</span>
+        </h1>
+
+        <p class="tagline">
+            Convert, Compress & Transform Files Instantly
+        </p>
+
+    </div>
+
+    <div class="tool-card">
+
+        <h2>Select Your Tool</h2>
+
+        <p>
+            Choose the conversion or PDF tool you want to use.
+        </p>
+
+        <select id="toolSelect">
+
+            <option value="">-- Select Tool --</option>
+
+            <option value="/word-to-pdf">
+                Word → PDF
+            </option>
+
+            <option value="/pdf-to-word">
+                PDF → Word
+            </option>
+
+            <option value="/image-to-pdf">
+                Image → PDF
+            </option>
+
+            <option value="/pdf-to-image">
+                PDF → Image
+            </option>
+
+            <option value="/word-to-image">
+                Word → Image
+            </option>
+
+            <option value="/compress-pdf">
+                Compress PDF
+            </option>
+
+            <option value="/merge-pdf">
+                Merge PDF
+            </option>
+
+            <option value="/split-pdf">
+                Split PDF
+            </option>
+
+        </select>
+
+        <button onclick="goToTool()">
+            Continue
+        </button>
+
+    </div>
+
+    <div class="features">
+
+        <div class="feature-box">
+            ⚡
+            <h3>Fast Conversion</h3>
+            <p>Convert files within seconds.</p>
+        </div>
+
+        <div class="feature-box">
+            🔒
+            <h3>Secure</h3>
+            <p>Your files stay private.</p>
+        </div>
+
+        <div class="feature-box">
+            🆓
+            <h3>Free</h3>
+            <p>Most tools available for free.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    function goToTool(){
+
+        let selectedTool =
+            document.getElementById("toolSelect").value;
+
+        if(selectedTool === ""){
+            alert("Please select a tool.");
+            return;
+        }
+
+        window.location.href = selectedTool;
+    }
+
+</script>
+
+</body>
+</html>

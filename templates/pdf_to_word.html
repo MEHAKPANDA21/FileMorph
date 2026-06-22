@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Word - FileMorph</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head><body><div class="converter-container">
+
+    <a href="/" class="back-btn">← Home</a>
+
+    <h1 class="page-title">
+        📑 PDF → Word Converter
+    </h1>
+
+    <p class="page-subtitle">
+        Upload your PDF file and convert it into an editable Word document.
+    </p>
+
+    <div class="upload-card">
+
+        <form
+            action="/convert-pdf-to-word"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <div class="drop-area">
+
+                <h2>Drag & Drop PDF Here</h2>
+
+                <p>or select a PDF file</p>
+
+                <input
+                    type="file"
+                    name="file"
+                    accept=".pdf"
+                    required
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="convert-btn"
+            >
+                Convert to Word
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="info-box">
+
+        <h3>Supported Format</h3>
+
+        <ul>
+            <li>✓ .pdf</li>
+        </ul>
+
+    </div>
+
+</div>
+
+</body>
+</html>

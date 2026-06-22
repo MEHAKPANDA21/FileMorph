@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compress PDF - FileMorph</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head><body><div class="converter-container">
+
+    <a href="/" class="back-btn">← Home</a>
+
+    <h1 class="page-title">
+        🗜 Compress PDF
+    </h1>
+
+    <p class="page-subtitle">
+        Reduce your PDF file size while maintaining quality.
+    </p>
+
+    <div class="upload-card">
+
+        <form
+            action="/compress-pdf-file"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <div class="drop-area">
+
+                <h2>Drag & Drop PDF Here</h2>
+
+                <p>or select a PDF file</p>
+
+                <input
+                    type="file"
+                    name="file"
+                    accept=".pdf"
+                    required
+                >
+
+            </div>
+
+            <div class="compression-level">
+
+                <label for="level">
+                    Compression Level
+                </label>
+
+                <select name="level" id="level">
+
+                    <option value="low">
+                        Low Compression (Best Quality)
+                    </option>
+
+                    <option value="medium" selected>
+                        Medium Compression
+                    </option>
+
+                    <option value="high">
+                        High Compression (Smallest Size)
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button
+                type="submit"
+                class="convert-btn"
+            >
+                Compress PDF
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="info-box">
+
+        <h3>Benefits</h3>
+
+        <ul>
+            <li>✓ Smaller file size</li>
+            <li>✓ Faster sharing</li>
+            <li>✓ Better storage efficiency</li>
+            <li>✓ Maintains document readability</li>
+        </ul>
+
+    </div>
+
+</div>
+
+</body>
+</html>
