@@ -58,15 +58,45 @@ def allowed_file(filename):
 
 # ========== LOCAL CONVERSION FUNCTIONS ==========
 
+import os
+import subprocess
+
 def convert_word_to_pdf_local(input_path, output_path):
-    """Convert Word document to PDF locally using docx2pdf"""
+    """Convert Word document to PDF locally using LibreOffice"""
     try:
-        if not HAS_DOCX2PDF:
-            return False, "docx2pdf library not available"
+        # Get absolute paths
+        abs_input = os.path.abspath(input_path)
+        abs_output = os.path.abspath(output_path)
+        output_dir = os.path.dirname(abs_output)
         
-        convert(input_path, output_path)
-        logger.info(f"Local conversion: {input_path} -> {output_path}")
-        return True, None
+        # 1. Run the LibreOffice conversion
+        subprocess.run(
+            ['libreoffice', '--headless', '--convert-to', 'pdf', '--outdir', output_dir, abs_input],
+            check=True,
+            capture_output=True,
+            text=True
+        )
+        
+        # 2. Figure out what LibreOffice actually named the file
+        # It takes the original file name and just changes the extension to .pdf
+        base_name = os.path.splitext(os.path.basename(abs_input))[0]
+        libreoffice_generated_file = os.path.join(output_dir, f"{base_name}.pdf")
+        
+        # 3. Rename it to match the requested output_path if they are different
+        if libreoffice_generated_file != abs_output and os.path.exists(libreoffice_generated_file):
+            os.replace(libreoffice_generated_file, abs_output)
+            
+        # 4. Final verification
+        if os.path.exists(abs_output):
+            logger.info(f"Local conversion successful: {input_path} -> {output_path}")
+            return True, None
+        else:
+            return False, "Conversion seemed to run, but the PDF file was not found."
+
+    except subprocess.CalledProcessError as e:
+        error_msg = e.stderr if e.stderr else str(e)
+        logger.error(f"Local Word to PDF conversion error: {error_msg}")
+        return False, f"LibreOffice error: {error_msg}"
     except Exception as e:
         logger.error(f"Local Word to PDF conversion error: {str(e)}")
         return False, str(e)
@@ -318,25 +348,7 @@ def compress_pdf_file_form():
         logger.error(f"Error in compress-pdf conversion: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-@app.route("/image-to-pdf")
-def image_to_pdf():
-    return "<h1>Image to PDF - Coming Soon</h1>"
 
-@app.route("/pdf-to-image")
-def pdf_to_image():
-    return "<h1>PDF to Image - Coming Soon</h1>"
-
-@app.route("/word-to-image")
-def word_to_image():
-    return "<h1>Word to Image - Coming Soon</h1>"
-
-@app.route("/merge-pdf")
-def merge_pdf():
-    return "<h1>Merge PDF - Coming Soon</h1>"
-
-@app.route("/split-pdf")
-def split_pdf():
-    return "<h1>Split PDF - Coming Soon</h1>"
 
 if __name__ == "__main__":
     app.run(
